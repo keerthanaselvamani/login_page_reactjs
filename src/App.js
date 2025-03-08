@@ -10,7 +10,7 @@ function App() {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <Route path="/dashboard" component={Dashboard} />
-        <Redirect from="/" to="/signup" />
+        <Redirect from="/" to="/login" />
       </Switch>
     </>
   );

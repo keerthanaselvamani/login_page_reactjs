@@ -14,47 +14,49 @@ const Login = () => {
     password: "",
   });
   const history = useHistory();
+  const [errors, setErrors] = useState({});
 
   const [touched, setTouched] = useState({});
 
-  const chaeckData = (obj) => {
+  const chaeckData = async (obj, event) => {
     const { email, password } = obj;
-    //   const urlApi = `http://localhost:8080/convertion/api/user/signup`;
-    //   // const pushData = async () => {
-    //   const responseA = (await axios.post(urlApi, data)).data;
-    //   console.log('response.data q: ', responseA)
-    //   if (true) {
-    //     notify("You signed Up successfully", "success");
-    //     history.push("/login");
-    //   } else {
-    //     notify("You have already registered, log in to your account", "warning");
-    //   }
-    // } catch (error) {
-    //   console.log('EXCEPTION:', error);
-    //   notify("Somthing error! please try again later", "error");
-    // }
+    console.log('intial data', data, obj)
+    event.preventDefault();
+    console.log('errorserrors: ', email, password)
+    if (email != "" && email != null && password != "" && password != null) {
+      const urlApi = `http://localhost:8080/convertion/api/user/login`;
+      const api = axios
+        .post(urlApi, data)
+        // .then((response) => {
+        //   console.log('login res: ',response.data);
+        // })
+        .then((data) => {
+          console.log('data.status ', data.status)
+          if (data.status == 200) {
+            notify("You login to your account successfully", "success")
+            // history.push("/dashboard");
+            const formData = {
+              name: "John Doe",
+              email: "john@example.com",
+            };
+            history.push("/dashboard", { formData });
+          } else {
+            notify("Your password or your email is wrong", "error")
+          }
+        });
 
-    const urlApi = `http://localhost:8080/convertion/api/user/login`;
-    const api = axios
-      .post(urlApi, obj)
-      // .then((response) => {
-      //   console.log('login res: ',response.data);
-      // })
-      .then((data) => {
-        console.log('data.status ', data.status)
-        if (data.status == 200) {
-          notify("You login to your account successfully", "success")
-          history.push("/dashboard");
-        } else {
-          notify("Your password or your email is wrong", "error")
-        }
+      //  toast.promise(api, {
+      //   pending: "Loading your data...",
+      //   success: false,
+      //   error: "Something went wrong!",
+      // });
+    } else {
+      notify("Please Check fileds again", "error");
+      setTouched({
+        password: true,
+        email: true
       });
-
-    //  toast.promise(api, {
-    //   pending: "Loading your data...",
-    //   success: false,
-    //   error: "Something went wrong!",
-    // });
+    }
   };
 
   const changeHandler = (event) => {
@@ -71,7 +73,7 @@ const Login = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    chaeckData(data);
+    chaeckData(data, event);
   };
 
   return (
@@ -80,8 +82,9 @@ const Login = () => {
         <h2>Sign In</h2>
         <div>
           <div>
-            <input type="text" name="email" value={data.email} placeholder="E-mail" onChange={changeHandler} onFocus={focusHandler} autoComplete="off" />
-            {/* <img src={emailIcon} alt="" /> */}
+            <div className={errors.email && touched.email ? styles.unCompleted : !errors.email && touched.email ? styles.completed : !errors.email && touched.email ? styles.completed : undefined}>
+              <input type="text" name="email" value={data.email} placeholder="E-mail" onChange={changeHandler} onFocus={focusHandler} autoComplete="off" />
+            </div>
           </div>
         </div>
         <div>
